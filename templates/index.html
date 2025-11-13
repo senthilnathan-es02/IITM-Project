@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculty Search</title>
+
+  <style>
+    /* Loading overlay styles */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 9999;
+      backdrop-filter: blur(2px);
+    }
+
+    .loading-box {
+      background: #fff;
+      padding: 18px 20px;
+      border-radius: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      max-width: 320px;
+      width: 90%;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 4px solid #e0e0e0;
+      border-top-color: #0d47a1;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* GENERAL PAGE */
+    body {
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+      margin: 0;
+      background: linear-gradient(135deg, #e3f2fd, #ffffff);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 50px;
+    }
+
+    /* ---------------------- FIXED HEADER ------------------------- */
+
+    header {
+      width: 100%;
+      background: #002d62;
+      padding: 18px 0;
+      display: flex;
+      justify-content: center;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .header-container {
+      width: 100%;
+      max-width: 1400px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+    }
+
+    /* ---- REDUCED LOGO SIZE ---- */
+    .logo {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      background: white;
+      padding: 8px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+    }
+
+    .header-text {
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .header-text h1 {
+      margin: 0;
+      font-size: 2.4rem;
+      color: white;
+      font-weight: 600;
+    }
+
+    .header-text .tagline {
+      margin-top: 6px;
+      font-size: 1.1rem;
+      color: #dfe6ee;
+      font-weight: 400;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .logo {
+        width: 85px;
+        height: 85px;
+      }
+
+      .header-text h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .header-text h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+
+    /* ---------------------- FORM CARD ------------------------- */
+
+    form {
+      margin-top: 40px;
+      background: white;
+      padding: 30px 25px 50px 25px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .form-check {
+      margin: 6px 8px;
+      display: inline-block;
+    }
+
+    .form-check-label {
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      margin: 0 3px;
+      accent-color: #0d47a1;
+      cursor: pointer;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    input[type="text"],
+    select {
+      padding: 12px 14px;
+      width: 100%;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    input[type="submit"] {
+      padding: 12px 25px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #0d47a1;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      transition: 0.3s ease;
+      margin-top: 20px;
+      width: 60%;
+    }
+
+    /* ABOUT SECTION */
+    .about {
+      margin-top: 40px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 25px 30px;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      line-height: 1.6;
+    }
+
+    .about h2 {
+      color: #0d47a1;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ---------------- HEADER ---------------- -->
+  <header>
+    <div class="header-container">
+
+      <!-- LEFT LOGO -->
+      <img src="{{ url_for('static', filename='right.png') }}" class="logo">
+
+      <!-- TITLE -->
+      <div class="header-text">
+        <h1>Q-Connect</h1>
+        <p class="tagline">Your Gateway to Quantum Expertise</p>
+      </div>
+
+      <!-- RIGHT LOGO -->
+      <img src="{{ url_for('static', filename='image.png') }}" class="logo">
+
+    </div>
+  </header>
+
+
+  <!-- ---------------- FORM ---------------- -->
+  <form action="/search" method="post">
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="search_type" value="keyword" checked>
+      <label class="form-check-label">Keyword</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="search_type" value="name">
+      <label class="form-check-label">Name</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="search_type" value="vidwan">
+      <label class="form-check-label">Vidwan</label>
+    </div>
+
+    <div class="input-group">
+      <input type="text" name="keyword" placeholder="Enter keyword or name or Vidwan-ID">
+
+      <select name="institution">
+        <option value="all">All Institutions</option>
+        <option value="IITM">IITM</option>
+        <option value="IITH">IITH</option>
+        <option value="IITI">IIT Indore</option>
+        <option value="IITP">IIT Patna</option>
+        <option value="IISC">IISC</option>
+        <option value="IITK">IIT Kanpur</option>
+        <option value="IITD">IIT Delhi</option>
+        <option value="IITR">IIT Roorkee</option>
+        <option value="IISERB">IISER Bhopal</option>
+        <option value="IITTP">IIT Tirupati</option>
+        <option value="IISERMOHALI">IISER Mohali</option>
+        <option value="IITJAMMU">IIT Jammu</option>
+        <option value="RRIT">RRIT</option>
+        <option value="HRI">HRI</option>
+        <option value="IITBHILAI">IIT Bhilai</option>
+        <option value="IITKGP">IIT Kharagpur</option>
+      </select>
+    </div>
+
+    <input type="submit" value="Search">
+  </form>
+
+
+  <!-- ---------------- ABOUT ---------------- -->
+  <div class="about">
+    <h2>About Q-Connect</h2>
+    <p>
+      QConnect is a smart search tool designed to help you discover researchers working in quantum science across LI/MI
+      institutes. Use keyword or name-based search to explore profiles, collaborations, and emerging talent.
+    </p>
+  </div>
+
+
+  <!-- ---------------- LOADING ---------------- -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <div class="loading-text">Loading... Please wait while we crawl profiles.</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const overlay = document.getElementById('loadingOverlay');
+      const form = document.querySelector('form');
+      if (form) form.addEventListener('submit', () => overlay.style.display = 'flex');
+      window.addEventListener('pageshow', () => overlay.style.display = 'none');
+    })();
+  </script>
+
+</body>
+
+</html>
